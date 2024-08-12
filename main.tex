@@ -1,246 +1,350 @@
+\documentclass[10pt, letterpaper]{article}
 
-%-----------------------------------------------------------------------------------------------------------------------------------------------%
-% The MIT License (MIT)
-%
-% Copyright (c) 2021 Jitin Nair
-%
-% Permission is hereby granted, free of charge, to any person obtaining a copy
-% of this software and associated documentation files (the "Software"), to deal
-% in the Software without restriction, including without limitation the rights
-% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-% copies of the Software, and to permit persons to whom the Software is
-% furnished to do so, subject to the following conditions:
-%
-% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-% THE SOFTWARE.
-%
-%
-%-----------------------------------------------------------------------------------------------------------------------------------------------%
+% Packages:
+\usepackage[
+    ignoreheadfoot, % set margins without considering header and footer
+    top=2 cm, % seperation between body and page edge from the top
+    bottom=2 cm, % seperation between body and page edge from the bottom
+    left=2 cm, % seperation between body and page edge from the left
+    right=2 cm, % seperation between body and page edge from the right
+    footskip=1.0 cm, % seperation between body and footer
+    % showframe % for debugging
+]{geometry} % for adjusting page geometry
+\usepackage[explicit]{titlesec} % for customizing section titles
+\usepackage{tabularx} % for making tables with fixed width columns
+\usepackage{array} % tabularx requires this
+\usepackage[dvipsnames]{xcolor} % for coloring text
+\definecolor{primaryColor}{RGB}{0, 79, 144} % define primary color
+\usepackage{enumitem} % for customizing lists
+\usepackage{fontawesome5} % for using icons
+\usepackage{amsmath} % for math
+\usepackage[
+    pdftitle={Jayadeep Bellamkonda's CV},
+    pdfauthor={Jayadeep Bellamkonda},
+    pdfcreator={LaTeX with RenderCV},
+    colorlinks=true,
+    urlcolor=primaryColor
+]{hyperref} % for links, metadata and bookmarks
+\usepackage[pscoord]{eso-pic} % for floating text on the page
+\usepackage{calc} % for calculating lengths
+\usepackage{bookmark} % for bookmarks
+\usepackage{lastpage} % for getting the total number of pages
+\usepackage{changepage} % for one column entries (adjustwidth environment)
+\usepackage{paracol} % for two and three column entries
+\usepackage{ifthen} % for conditional statements
+\usepackage{needspace} % for avoiding page brake right after the section title
+\usepackage{iftex} % check if engine is pdflatex, xetex or luatex
 
-%----------------------------------------------------------------------------------------
-% DOCUMENT DEFINITION
-%----------------------------------------------------------------------------------------
+% Ensure that generate pdf is machine readable/ATS parsable:
+\ifPDFTeX
+    \input{glyphtounicode}
+    \pdfgentounicode=1
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+    \usepackage{lmodern}
+\fi
 
-% article class because we want to fully customize the page and not use a cv template
-\documentclass[a4paper,12pt]{article}
+\usepackage[default, type1]{sourcesanspro}
 
-%----------------------------------------------------------------------------------------
-% FONT
-%----------------------------------------------------------------------------------------
+% Some settings:
+\AtBeginEnvironment{adjustwidth}{\partopsep0pt} % remove space before adjustwidth environment
+\pagestyle{empty} % no header or footer
+\setcounter{secnumdepth}{0} % no section numbering
+\setlength{\parindent}{0pt} % no indentation
+\setlength{\topskip}{0pt} % no top skip
+\setlength{\columnsep}{0.15cm} % set column seperation
+\makeatletter
+\let\ps@customFooterStyle\ps@plain % Copy the plain style to customFooterStyle
+\patchcmd{\ps@customFooterStyle}{\thepage}{
+    \color{gray}\textit{\small }
+}{}{} % replace number by desired string
+\makeatother
+\pagestyle{customFooterStyle}
 
-% % fontspec allows you to use TTF/OTF fonts directly
-% \usepackage{fontspec}
-% \defaultfontfeatures{Ligatures=TeX}
+\titleformat{\section}{
+    % avoid page braking right after the section title
+    \needspace{4\baselineskip}
+    % make the font size of the section title large and color it with the primary color
+    \Large\color{primaryColor}
+}{
+}{
+}{
+    % print bold title, give 0.15 cm space and draw a line of 0.8 pt thickness
+    % from the end of the title to the end of the body
+    \textbf{#1}\hspace{0.15cm}\titlerule[0.8pt]\hspace{-0.1cm}
+}[] % section title formatting
 
-% % modified for ShareLaTeX use
-% \setmainfont[
-% SmallCapsFont = Fontin-SmallCaps.otf,
-% BoldFont = Fontin-Bold.otf,
-% ItalicFont = Fontin-Italic.otf
-% ]
-% {Fontin.otf}
+\titlespacing{\section}{
+    % left space:
+    -1pt
+}{
+    % top space:
+    0.3 cm
+}{
+    % bottom space:
+    0.2 cm
+} % section title spacing
 
-%----------------------------------------------------------------------------------------
-% PACKAGES
-%----------------------------------------------------------------------------------------
-\usepackage{url}
-\usepackage{parskip}
+% \renewcommand\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$} % custom bullet points
+\newenvironment{highlights}{
+    \begin{itemize}[
+        topsep=0.10 cm,
+        parsep=0.10 cm,
+        partopsep=0pt,
+        itemsep=0pt,
+        leftmargin=0.4 cm + 10pt
+    ]
+}{
+    \end{itemize}
+} % new environment for highlights
 
-%other packages for formatting
-\RequirePackage{color}
-\RequirePackage{graphicx}
-\usepackage[usenames,dvipsnames]{xcolor}
-\usepackage[scale=0.9]{geometry}
+\newenvironment{highlightsforbulletentries}{
+    \begin{itemize}[
+        topsep=0.10 cm,
+        parsep=0.10 cm,
+        partopsep=0pt,
+        itemsep=0pt,
+        leftmargin=10pt
+    ]
+}{
+    \end{itemize}
+} % new environment for highlights for bullet entries
 
-%tabularx environment
-\usepackage{tabularx}
 
-%for lists within experience section
-\usepackage{enumitem}
+\newenvironment{onecolentry}{
+    \begin{adjustwidth}{
+        0.2 cm + 0.00001 cm
+    }{
+        0.2 cm + 0.00001 cm
+    }
+}{
+    \end{adjustwidth}
+} % new environment for one column entries
 
-% centered version of 'X' col. type
-\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newenvironment{twocolentry}[2][]{
+    \onecolentry
+    \def\secondColumn{#2}
+    \setcolumnwidth{\fill, 4.5 cm}
+    \begin{paracol}{2}
+}{
+    \switchcolumn \raggedleft \secondColumn
+    \end{paracol}
+    \endonecolentry
+} % new environment for two column entries
 
-%to prevent spillover of tabular into next pages
-\usepackage{supertabular}
-\usepackage{tabularx}
-\newlength{\fullcollw}
-\setlength{\fullcollw}{0.47\textwidth}
+\newenvironment{threecolentry}[3][]{
+    \onecolentry
+    \def\thirdColumn{#3}
+    \setcolumnwidth{1 cm, \fill, 4.5 cm}
+    \begin{paracol}{3}
+    {\raggedright #2} \switchcolumn
+}{
+    \switchcolumn \raggedleft \thirdColumn
+    \end{paracol}
+    \endonecolentry
+} % new environment for three column entries
 
-%custom \section
-\usepackage{titlesec}
-\usepackage{multicol}
-\usepackage{multirow}
+\newenvironment{header}{
+    \setlength{\topsep}{0pt}\par\kern\topsep\centering\color{primaryColor}\linespread{1.5}
+}{
+    \par\kern\topsep
+} % new environment for the header
 
-%CV Sections inspired by:
-%http://stefano.italians.nl/archives/26
-\titleformat{\section}{\Large\scshape\raggedright}{}{0em}{}[\titlerule]
-\titlespacing{\section}{0pt}{10pt}{10pt}
+\newcommand{\placelastupdatedtext}{% \placetextbox{<horizontal pos>}{<vertical pos>}{<stuff>}
+  \AddToShipoutPictureFG*{% Add <stuff> to current page foreground
+    \put(
+        \LenToUnit{\paperwidth-2 cm-0.2 cm+0.05cm},
+        \LenToUnit{\paperheight-1.0 cm}
+    ){\vtop{{\null}\makebox[0pt][c]{
+        \small\color{gray}\textit{}\hspace{\widthof{}}
+    }}}%
+  }%
+}%
 
-%for publications
-\usepackage[style=authoryear,sorting=ynt, maxbibnames=2]{biblatex}
+% save the original href command in a new command:
+\let\hrefWithoutArrow\href
 
-%Setup hyperref package, and colours for links
-\usepackage[unicode, draft=false]{hyperref}
-\definecolor{linkcolour}{rgb}{0,0.2,0.6}
-\hypersetup{colorlinks,breaklinks,urlcolor=linkcolour,linkcolor=linkcolour}
-\addbibresource{citations.bib}
-\setlength\bibitemsep{1em}
+% new command for external links:
+\renewcommand{\href}[2]{\hrefWithoutArrow{#1}{\ifthenelse{\equal{#2}{}}{ }{#2 }\raisebox{.15ex}{\footnotesize \faExternalLink*}}}
 
-%for social icons
-\usepackage{fontawesome5}
 
-%debug page outer frames
-%\usepackage{showframe}
-
-%----------------------------------------------------------------------------------------
-% BEGIN DOCUMENT
-%----------------------------------------------------------------------------------------
 \begin{document}
+    \newcommand{\AND}{\unskip
+        \cleaders\copy\ANDbox\hskip\wd\ANDbox
+        \ignorespaces
+    }
+    \newsavebox\ANDbox
+    \sbox\ANDbox{}
 
-% non-numbered pages
-\pagestyle{empty}
+    \placelastupdatedtext
+    \begin{header}
+        \fontsize{30 pt}{30 pt}
+        \textbf{Jayadeep Bellamkonda}
 
-%----------------------------------------------------------------------------------------
-% TITLE
-%----------------------------------------------------------------------------------------
+        \vspace{0.3 cm}
 
-% \begin{tabularx}{\linewidth}{ @{}X X@{} }
-% \huge{Your Name}\vspace{2pt} & \hfill \emoji{incoming-envelope} email@email.com \\
-% \raisebox{-0.05\height}\faGithub\ username \ | \
-% \raisebox{-0.00\height}\faLinkedin\ username \ | \ \raisebox{-0.05\height}\faGlobe \ mysite.com  & \hfill \emoji{calling} number
-% \end{tabularx}
+        \normalsize
+        \mbox{\hrefWithoutArrow{mailto:jayadeep.bellamkonda@gmail.com}{{\footnotesize\faEnvelope[regular]}\hspace*{0.13cm}jayadeep.bellamkonda@gmail.com}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{tel:+91-97053-52421}{{\footnotesize\faPhone*}\hspace*{0.13cm}097053 52421}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{https://linkedin.com/in/jayadeep11}{{\footnotesize\faLinkedinIn}\hspace*{0.13cm}jayadeep11}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{https://github.com/jayadeep11}{{\footnotesize\faGithub}\hspace*{0.13cm}jayadeep11}}%
+    \end{header}
 
-\begin{tabularx}{\linewidth}{@{} C @{}}
-\Huge{Jayadeep Bellamkonda} \\[7.5pt]
-\href{https://github.com/jayadeep11}{\raisebox{-0.05\height}\faGithub\ jayadeep11} \ $|$ \
-\href{https://www.linkedin.com/in/jayadeep11/}{\raisebox{-0.05\height}\faLinkedin\ jayadeep11} \ $|$ \
-% \href{https://mysite.com}{\raisebox{-0.05\height}\faGlobe \ mysite.com} \ $|$ \
-\href{mailto:jayadeep.bellamkonda@gmail.com}{\raisebox{-0.05\height}\faEnvelope \ jayadeep.bellamkonda@gmail.com} \ $|$ \
-\href{tel:+91 9705352421}{\raisebox{-0.05\height}\faMobile \ +91 9705352421 } \\
-\end{tabularx}
-
-%----------------------------------------------------------------------------------------
-% EXPERIENCE SECTIONS
-%----------------------------------------------------------------------------------------
-
-%Interests/ Keywords/ Summary
-\section{Summary}
-Passionate Front End Developer with a keen interest in leveraging React.js and Next.js to create dynamic and user-friendly web applications. Dedicated to staying updated with the latest industry trends and technologies.
-
-%Experience
-\section{Skills}
-
-\begin{tabularx}{\linewidth}{ @{}l r@{} }
-\textbf{Languages} & {: Python, C, C++, Sql, javascript, typescript} \\[3.75pt]
-\end{tabularx}
-
-\begin{tabularx}{\linewidth}{ @{}l r@{} }
-\textbf{Technologies} & {: Html5, Css} \\[3.75pt]
-\end{tabularx}
-
-\begin{tabularx}{\linewidth}{ @{}l r@{} }
-\textbf{Frameworks} & {: Tailwind css, React js, Next js, Django} \\[3.75pt]
-\end{tabularx}
-
-\begin{tabularx}{\linewidth}{ @{}l r@{} }
-\textbf{Operating System} & {: ArchLinux (Primary OS )} \\[3.75pt]
-\end{tabularx}
-
-\begin{tabularx}{\linewidth}{ @{}l r@{} }
-\textbf{Tools} & {: Git Github .} \\[3.75pt]
-\end{tabularx}
-
-% \begin{tabularx}{\linewidth}{ @{}l r@{} }
-% \textbf{Soft Skills} & {: Adaptability, Time Managaement} \\[3.75pt]
-% \end{tabularx}
+    \vspace{0.3 cm - 0.3 cm}
 
 
-%Projects
-\section{Projects}
-\textbf{Portfolio}
-\begin{itemize}
-    \item Developed a self-designed personal portfolio showcasing some of my projects, and technical skills. Implemented a fully responsive multi-page layout to ensure an optimal user experience across devices.Leveraged React.js, JavaScript, NPM packages, and hosted on Vercel for seamless deployment.
-\end{itemize}
-
-\textbf{GFinder}
-\begin{itemize}
-    \item Developed a web application using [relevant technologies, e.g., JavaScript, React, and GitHub API] that allows users to search for GitHub profiles by username. The application fetches and displays user information such as repositories, followers, following, and other public data. Implemented features include error handling for non-existent users, responsive design for various devices, and an intuitive user interface to enhance user experience.
-\end{itemize}
-
-   
-
-%----------------------------------------------------------------------------------------
-% EDUCATION
-%----------------------------------------------------------------------------------------
-\section{Education}
-\begin{tabularx}{\linewidth}{@{}l X@{}}
-
-2022 - 2025(Present) & B.tech \textbf{(IT)} \textbf {GVP College Of Engineering.} \hfill  (GPA: 7.9/10.0) \\
-
-2019 - 2021 & \textbf{(CSE)} \textbf {Gowtham junior college} \hfill (GPA: 9.1/10.0) \\
-\end{tabularx}
-
-%----------------------------------------------------------------------------------------
-%
-%----------------------------------------------------------------------------------------
-
-
-%----------------------------------------------------------------------------------------
-% SKILLS
-%----------------------------------------------------------------------------------------
-\section{Social Engagements}
-\begin{minipage}[t]{0.5\textwidth}
-    \begin{itemize}
-        \item Member of Rotract Club.
-    \end{itemize}
-\end{minipage}%
-
-\section{Strengths}
-\begin{minipage}[t]{0.5\textwidth}
-    \begin{itemize}
-        \item Problem Solving
-    \end{itemize}
-\end{minipage}%
-\begin{minipage}[t]{0.5\textwidth}
-    \begin{itemize}
-        \item Analytical Thinking
-    \end{itemize}
-\end{minipage}
-
-\begin{minipage}[t]{0.5\textwidth}
-    \begin{itemize}
-        \item TeamWork
-    \end{itemize}
-\end{minipage}
-\begin{minipage}[t]{0.5\textwidth}
-    \begin{itemize}
-        \item Communication
-    \end{itemize}
-\end{minipage}
-
-\begin{minipage}[t]{0.5\textwidth}
-    \begin{itemize}
-        \item Adaptability
-    \end{itemize}
-\end{minipage}
-\begin{minipage}[t]{0.5\textwidth}
-    \begin{itemize}
-        \item Time Managaement
-    \end{itemize}
-\end{minipage}
+    \section{Skills}
 
 
 
 
-\vfill
-% \center{\footnotesize Last updated: \today}
+        \begin{onecolentry}
+            \textbf{Languages:} C, C++, Java, Python, SQL, JavaScript
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Web Technologies:} HTML5, CSS, Tailwindcss, React.js
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Platform:} Linux (Arch Linux)
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Linux Tools:} Neovim Tmux kitty fzf zoxide
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Tools:} Git Github vercel
+        \end{onecolentry}
+
+
+
+    \section{Projects}
+
+
+
+
+        \begin{onecolentry}
+            \textbf{Personal Portfolio Website}
+            \begin{highlights}
+                \item Developed a personal portfolio website to showcase skills, projects, and experience.
+                \item Implemented a project showcase, blog section, and contact form for professional online presence.
+                \item Utilized React.js and Tailwind CSS for responsive and dynamic design.
+            \end{highlights}
+        \end{onecolentry}
+
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{GitHub User Finder Application}
+            \begin{highlights}
+                \item Developed a responsive web application using React.js and Tailwind CSS to facilitate GitHub user searches.
+                \item Implemented dynamic user interface components and integrated GitHub API for real-time data retrieval.
+                \item Utilized React.js and Tailwind CSS for responsive and dynamic design.
+            \end{highlights}
+        \end{onecolentry}
+
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{GitHub Command Utility}
+            \begin{highlights}
+                \item Developed a custom gh command-line tool to interact with GitHub repositories directly from the terminal.
+                \item Enables quick access to main GitHub page, repository creation, repository viewing, SSH key management, personal access token management, and more via simple command-line arguments.
+            \end{highlights}
+        \end{onecolentry}
+
+
+
+
+    \section{Additional Experience}
+
+
+
+
+        \begin{onecolentry}
+            \textbf{Linux (ArchLinux):} Customized system setup with Hyprland, i3, and Hyprland for optimal performance and workflow. Hands-on experience with terminal-based applications and configurations.
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Linux Scripts:} Created various custom Linux scripts to automate tasks, streamline workflows, and manage system configurations.
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Problem solving:} Familiar with both recursive and iterative approaches to solving complex problems.
+        \end{onecolentry}
+
+
+
+    \section{Education}
+
+
+
+
+        \begin{threecolentry}{\textbf{B.tech}}{
+            Sept 2022 – May 2025
+        }
+            \textbf{GVP COLLEGE OF ENGINEERING (Autonomous)}, Information Technology
+            \begin{highlights}
+                \item CGPA: 7.6
+            \end{highlights}
+        \end{threecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{threecolentry}{\textbf{Dip}}{
+            Sept 2020 – May 2022
+        }
+            \textbf{Sir C.R.Reddy Polytechnic college}, Computer Science
+            \begin{highlights}
+                \item CGPA: 8.0
+            \end{highlights}
+        \end{threecolentry}
+
+
+
+    \section{Interests}
+
+    \begin{onecolentry}
+        \begin{highlightsforbulletentries}
+
+
+        \item Daily problem-solving on LeetCode and learning new techniques.
+
+        \item Continuous learning and staying updated with the latest technology trends.
+
+        \item Listening to music and discovering new genres.
+
+        \item Exploring new places and experiencing different cultures.
+
+
+        \end{highlightsforbulletentries}
+    \end{onecolentry}
+
 
 \end{document}
-
 
